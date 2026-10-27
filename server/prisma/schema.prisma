@@ -13,12 +13,43 @@ enum Role {
   ADMIN
 }
 
+enum ProjectStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(STUDENT)
+  id               String    @id @default(uuid())
+  name             String
+  email            String    @unique
+  password         String
+  role             Role      @default(STUDENT)
+  projects         Project[] @relation("StudentProjects")
+  reviewedProjects Project[] @relation("ReviewedProjects")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Project {
+  id            String        @id @default(uuid())
+  projectName   String
+  repositoryUrl String        @unique
+  liveUrl       String        @unique
+  description   String
+  status        ProjectStatus @default(PENDING)
+
+  studentId String
+  student   User   @relation("StudentProjects", fields: [studentId], references: [id], onDelete: Cascade)
+
+  reviewedById String?
+  reviewedBy   User?     @relation("ReviewedProjects", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewNote   String?
+  reviewedAt   DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([studentId])
+  @@index([status, createdAt])
 }
