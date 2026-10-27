@@ -1,0 +1,184 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
+
+export default function SignupPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email, password }),
+        },
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.message || "Unable to create your account.");
+        return;
+      }
+
+      localStorage.setItem("token", result.data.token);
+      localStorage.setItem("user", JSON.stringify(result.data.user));
+
+      window.location.href = "/student";
+    } catch {
+      setError("Unable to connect to the server. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-violet-50/60 px-4 py-10 font-sans">
+      <div className="w-full max-w-lg rounded-2xl border border-violet-100 bg-white p-8 shadow-xl shadow-violet-100/60 sm:p-10">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm font-semibold tracking-wide text-primary"
+        >
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">
+            P
+          </span>
+          Project Review Board
+        </Link>
+
+        <div className="mt-8">
+          <p className="text-sm font-medium text-primary">Start your journey</p>
+
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900">
+            Create your account
+          </h1>
+
+          <p className="mt-2 text-sm leading-6 text-slate-500">
+            Join the platform to submit projects and track your progress.
+          </p>
+        </div>
+
+        <form onSubmit={handleSignup} className="mt-8 space-y-5">
+          <div className="space-y-2">
+            <label
+              htmlFor="name"
+              className="text-sm font-medium text-slate-700"
+            >
+              Full name
+            </label>
+
+            <input
+              id="name"
+              type="text"
+              autoComplete="name"
+              required
+              minLength={2}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your full name"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="email"
+              className="text-sm font-medium text-slate-700"
+            >
+              Email address
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label
+              htmlFor="password"
+              className="text-sm font-medium text-slate-700"
+            >
+              Password
+            </label>
+
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="new-password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Create a password (minimum 8 characters)"
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 pr-12 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-primary focus:ring-4 focus:ring-primary/10"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-pressed={showPassword}
+                className="absolute inset-y-0 right-0 flex items-center justify-center px-4 text-slate-400 transition hover:text-primary"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          {error && (
+            <p
+              role="alert"
+              className="rounded-xl border border-red-100 bg-red-50 p-3 text-sm text-red-600"
+            >
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex h-12 w-full items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? "Creating account..." : "Create account"}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-slate-500">
+          Already have an account?{" "}
+          <Link
+            href="/"
+            className="font-semibold text-primary transition hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+
+        <p className="mt-8 text-center text-xs text-slate-400">
+          Submit. Review. Improve.
+        </p>
+      </div>
+    </main>
+  );
+}
