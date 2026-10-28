@@ -11,7 +11,18 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+  const demoAccounts = {
+    student: {
+      email: "student1@projectreviewboard.com",
+      password: "Student@1",
+    },
+    mentor: {
+      email: "mentor1@projectreviewboard.com",
+      password: "Mentor@1",
+    },
+  };
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -45,6 +56,12 @@ export default function LoginPage() {
     }
   };
 
+  const useDemoAccount = (role) => {
+    setEmail(demoAccounts[role].email);
+    setPassword(demoAccounts[role].password);
+    setError("");
+  };
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-violet-50/60 px-4 py-10 font-sans">
       <div className="w-full max-w-lg rounded-2xl border border-violet-100 bg-white p-8 shadow-xl shadow-violet-100/60 sm:p-10">
@@ -66,7 +83,7 @@ export default function LoginPage() {
             Welcome back
           </h1>
           <p className="mt-2 text-sm leading-6 text-slate-500">
-            Sign in to submit projects, track progress, and review submissions.
+            Sign in to submit projects and review submissions.
           </p>
         </div>
 
@@ -114,7 +131,6 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
-                aria-pressed={showPassword}
                 className="absolute inset-y-0 right-0 flex items-center justify-center px-4 text-slate-400 transition hover:text-primary"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -139,6 +155,48 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
+
+        <div className="mt-6 rounded-xl border border-violet-100 bg-violet-50/50 p-4">
+          <p className="mb-3 text-sm font-semibold text-slate-800">
+            Demo Accounts
+          </p>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              onClick={() => useDemoAccount("student")}
+              className="rounded-lg border border-slate-200 bg-white p-3 text-left transition hover:border-primary hover:bg-violet-50"
+            >
+              <p className="text-sm font-semibold text-primary">Student</p>
+              <p className="mt-1 break-all text-xs text-slate-500">
+                {demoAccounts.student.email}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                {demoAccounts.student.password}
+              </p>
+              <p className="mt-3 text-xs font-semibold text-primary">
+                Use account →
+              </p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => useDemoAccount("mentor")}
+              className="rounded-lg border border-slate-200 bg-white p-3 text-left transition hover:border-primary hover:bg-violet-50"
+            >
+              <p className="text-sm font-semibold text-primary">Mentor</p>
+              <p className="mt-1 break-all text-xs text-slate-500">
+                {demoAccounts.mentor.email}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">
+                {demoAccounts.mentor.password}
+              </p>
+              <p className="mt-3 text-xs font-semibold text-primary">
+                Use account →
+              </p>
+            </button>
+          </div>
+        </div>
 
         <div className="my-6 flex items-center gap-4">
           <div className="h-px flex-1 bg-slate-100" />
