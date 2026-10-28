@@ -6,6 +6,12 @@ import projectRoutes from "./modules/projects/project.routes.js";
 import mentorRoutes from "./modules/mentor/mentor.routes.js";
 
 const app = express();
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "API is running",
+  });
+});
 
 app.use(helmet());
 
