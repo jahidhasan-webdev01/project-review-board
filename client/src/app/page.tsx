@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+
+type DemoRole = "student" | "mentor";
+
+type DemoAccount = {
+  email: string;
+  password: string;
+};
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,7 +19,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const demoAccounts = {
+  const demoAccounts: Record<DemoRole, DemoAccount> = {
     student: {
       email: "student1@projectreviewboard.com",
       password: "Student@1",
@@ -22,7 +30,7 @@ export default function LoginPage() {
     },
   };
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setLoading(true);
@@ -56,7 +64,7 @@ export default function LoginPage() {
     }
   };
 
-  const useDemoAccount = (role) => {
+  const useDemoAccount = (role: DemoRole) => {
     setEmail(demoAccounts[role].email);
     setPassword(demoAccounts[role].password);
     setError("");
