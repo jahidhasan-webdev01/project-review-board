@@ -22,9 +22,7 @@ export const createToken = (user: TokenUser): string => {
     throw new Error("JWT_SECRET is not configured");
   }
 
-  return jwt.sign(
-    { sub: user.id, email: user.email, role: user.role },
-    secret,
-    { expiresIn: "1d" },
-  );
+  return jwt.sign({ id: user.id, email: user.email, role: user.role }, secret, {
+    expiresIn: "1d",
+  });
 };

@@ -36,7 +36,7 @@ export const authenticate = (
     const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
 
     if (
-      typeof decoded.sub !== "string" ||
+      typeof decoded.id !== "string" ||
       typeof decoded.email !== "string" ||
       !["STUDENT", "MENTOR", "ADMIN"].includes(decoded.role)
     ) {
@@ -47,7 +47,7 @@ export const authenticate = (
     }
 
     req.user = {
-      id: decoded.sub,
+      id: decoded.id,
       email: decoded.email,
       role: decoded.role,
     };
